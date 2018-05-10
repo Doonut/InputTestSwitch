@@ -17,8 +17,6 @@ int main(int argc, char **argv){
         //hidKeysDown returns information about which buttons have been just pressed (and they weren't in the previous frame)
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
-        printf("%d", kDown);
-
         START_BITMASK_SWITCH(kDown){
             case KEY_A:
                 printf("A Pressed\n");
