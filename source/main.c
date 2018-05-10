@@ -2,65 +2,108 @@
 #include <stdio.h>
 #include <switch.h>
 
-#ifdef DISPLAY_IMAGE
-#include "image_bin.h"//Your own raw RGB888 1280x720 image at "data/image.bin" is required.
-#endif
+#define START_BITMASK_SWITCH(x) \
+            for (uint64_t bit = 1; x >= bit; bit *= 2) if (x & bit) switch (bit)
 
-//See also libnx gfx.h.
-
-int main(int argc, char **argv)
-{
-    u32* framebuf;
-    u32  cnt=0;
-    #ifdef DISPLAY_IMAGE
-    u8*  imageptr = (u8*)image_bin;
-    #endif
-
-    //Enable max-1080p support. Remove for 720p-only resolution.
-    //gfxInitResolutionDefault();
-
+int main(int argc, char **argv){
     gfxInitDefault();
+    consoleInit(NULL);
 
-    //Set current resolution automatically depending on current/changed OperationMode. Only use this when using gfxInitResolution*().
-    //gfxConfigureAutoResolutionDefault(true);
-
-    while(appletMainLoop())
-    {
+    // Main loop
+    while(appletMainLoop()){
         //Scan all the inputs. This should be done once for each frame
         hidScanInput();
 
         //hidKeysDown returns information about which buttons have been just pressed (and they weren't in the previous frame)
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
+        printf("%d", kDown);
+
+        START_BITMASK_SWITCH(kDown){
+            case KEY_A:
+                printf("A Pressed\n");
+                break;
+            case KEY_B:
+                printf("B Pressed\n");
+                break;
+            case KEY_X:
+                printf("X Pressed\n");
+                break;
+            case KEY_Y:
+                printf("Y Pressed\n");
+                break;
+            case KEY_LSTICK:
+                printf("Left Stick Pressed\n");
+                break;
+            case KEY_RSTICK:
+                printf("Right Stick Pressed\n");
+                break;
+            case KEY_L:
+                printf("L Pressed\n");
+                break;
+            case KEY_R:
+                printf("R Pressed\n");
+                break;
+            case KEY_ZL:
+                printf("ZL Pressed\n");
+                break;
+            case KEY_ZR:
+                printf("ZR Pressed\n");
+                break;
+            case KEY_PLUS:
+                printf("Plus Pressed\n");
+                break;
+            case KEY_MINUS:
+                printf("Minus Pressed\n");
+                break;
+            case KEY_DLEFT:
+                printf("Dpad Left Pressed\n");
+                break;
+            case KEY_DUP:
+                printf("Dpad Up Pressed\n");
+                break;
+            case KEY_DRIGHT:
+                printf("Dpad Right Pressed\n");
+                break;
+            case KEY_DDOWN:
+                printf("Dpad Down Pressed\n");
+                break;
+            case KEY_LSTICK_LEFT:
+                printf("Left Stick Left Pressed\n");
+                break;
+            case KEY_LSTICK_UP:
+                printf("Left Stick Up Pressed\n");
+                break;
+            case KEY_LSTICK_RIGHT:
+                printf("Left Stick Right Pressed\n");
+                break;
+            case KEY_LSTICK_DOWN:
+                printf("Left Stick Down Pressed\n");
+                break;
+            case KEY_RSTICK_LEFT:
+                printf("Right Stick Left Pressed\n");
+                break;
+            case KEY_RSTICK_UP:
+                printf("Right Stick Up Pressed\n");
+                break;
+            case KEY_RSTICK_RIGHT:
+                printf("Right Stick Right Pressed\n");
+                break;
+            case KEY_RSTICK_DOWN:
+                printf("Right Stick Down Pressed\n");
+                break;
+            case KEY_SL:
+                printf("SL Pressed\n");
+                break;
+            case KEY_SR:
+                printf("SR Pressed\n");
+                break;
+            case KEY_TOUCH:
+                printf("Pressed The Touch Screen\n");
+                break;
+        }
+
         if (kDown & KEY_PLUS) break; // break in order to return to hbmenu
-
-        u32 width, height;
-        u32 pos;
-        framebuf = (u32*) gfxGetFramebuffer((u32*)&width, (u32*)&height);
-
-        if(cnt==60)
-        {
-            cnt=0;
-        }
-        else
-        {
-            cnt++;
-        }
-
-        //Each pixel is 4-bytes due to RGBA8888.
-        u32 x, y;
-        for (y=0; y<height; y++)//Access the buffer linearly.
-        {
-            for (x=0; x<width; x++)
-            {
-                pos = y * width + x;
-                #ifdef DISPLAY_IMAGE
-                framebuf[pos] = RGBA8_MAXALPHA(imageptr[pos*3+0]+(cnt*4), imageptr[pos*3+1], imageptr[pos*3+2]);
-                #else
-                framebuf[pos] = 0x01010101 * cnt * 4;//Set framebuf to different shades of grey.
-                #endif
-            }
-        }
 
         gfxFlushBuffers();
         gfxSwapBuffers();
