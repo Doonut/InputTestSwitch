@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <switch.h>
 
+//Define a switch function for bitmask operations in binary
 #define START_BITMASK_SWITCH(x) \
             for (uint64_t bit = 1; x >= bit; bit *= 2) if (x & bit) switch (bit)
 
@@ -17,6 +18,7 @@ int main(int argc, char **argv){
         //hidKeysDown returns information about which buttons have been just pressed (and they weren't in the previous frame)
         u64 kDown = hidKeysDown(CONTROLLER_P1_AUTO);
 
+        //for each enum in the button array, print the corresponding key on screen
         START_BITMASK_SWITCH(kDown){
             case KEY_A:
                 printf("A Pressed\n");
@@ -100,14 +102,10 @@ int main(int argc, char **argv){
                 printf("Pressed The Touch Screen\n");
                 break;
         }
-
-        if (kDown & KEY_PLUS) break; // break in order to return to hbmenu
-
         gfxFlushBuffers();
         gfxSwapBuffers();
         gfxWaitForVsync();
     }
-
     gfxExit();
     return 0;
 }
