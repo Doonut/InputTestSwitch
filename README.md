@@ -1,1 +1,1 @@
-Graphics testing on the switch
+Test inputs on the switch HBL
